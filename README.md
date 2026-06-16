@@ -14,8 +14,7 @@ dotfiles/
 ├── zsh/        # → ~/.zshrc
 ├── brew/       # → ~/Brewfile
 ├── zed/        # → ~/.config/zed/settings.json
-├── btop/       # → ~/.config/btop/
-└── lla/        # → ~/.config/lla/
+└── btop/       # → ~/.config/btop/
 ```
 
 `AGENTS.md` is the single source of truth for agent instructions; `~/.claude/CLAUDE.md`
@@ -30,14 +29,23 @@ explicitly if your shell doesn't expand the glob).
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew zed btop lla
+stow -t ~ opencode claude zsh brew zed btop
 ```
+
+## Brewfile
+
+`brew/Brewfile` tracks the Homebrew packages, casks, Go tools, and npm packages you want installed. It's managed by [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle) and is symlinked to `~/Brewfile`.
+
+| Command | Action |
+|---|---|
+| `brew bundle --file ~/Brewfile` | Install everything in the file (additive — never deletes) |
+| `brew bundle check --file ~/Brewfile` | Show what's missing or needs updating |
+| `brew bundle dump --force --no-vscode --file ~/Brewfile` | Regenerate from what's actually installed |
+
+After making changes via `brew bundle dump`, review with `git diff` and commit.
 
 External dependencies these configs assume (install separately):
 
-- **Homebrew packages:** `brew bundle --file ~/Brewfile` (additive — never deletes;
-  refresh with `brew bundle dump --force --no-vscode --file ~/Brewfile`. The
-  `--no-vscode` flag avoids dumping VS Code extensions, which Settings Sync owns.)
 - **oh-my-zsh** (and the `gis` theme) — `.zshrc` sources it
 
 > **Note:** this repo does not live under `$HOME`, so the `-t ~` (`--target`) flag is
