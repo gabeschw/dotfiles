@@ -13,6 +13,7 @@ dotfiles/
 ├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json)
 ├── zsh/        # → ~/.zshrc
 ├── brew/       # → ~/Brewfile
+├── ghostty/    # → ~/.config/ghostty/config
 ├── zed/        # → ~/.config/zed/settings.json
 └── btop/       # → ~/.config/btop/
 ```
@@ -29,7 +30,7 @@ explicitly if your shell doesn't expand the glob).
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew zed btop
+stow -t ~ opencode claude zsh brew ghostty zed btop
 ```
 
 ## Brewfile
