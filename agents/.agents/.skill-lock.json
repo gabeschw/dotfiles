@@ -1,0 +1,104 @@
+{
+  "version": 3,
+  "skills": {
+    "building-pydantic-ai-agents": {
+      "source": "pydantic/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/pydantic/skills.git",
+      "skillPath": "skills/building-pydantic-ai-agents/SKILL.md",
+      "skillFolderHash": "b6d0d60f84226abac257a2129b0537fb5b787af4",
+      "installedAt": "2026-06-09T12:32:48.124Z",
+      "updatedAt": "2026-06-16T12:32:09.822Z"
+    },
+    "pydantic-ai-harness": {
+      "source": "pydantic/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/pydantic/skills.git",
+      "skillPath": "skills/pydantic-ai-harness/SKILL.md",
+      "skillFolderHash": "11af9a014dbaa6b8ab204fe84765b6d441e79769",
+      "installedAt": "2026-06-09T12:32:48.126Z",
+      "updatedAt": "2026-06-09T12:32:48.126Z"
+    },
+    "defuddle": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/defuddle/SKILL.md",
+      "skillFolderHash": "db0b775af7e7d603f59fa2b67bdef615baf1a48f",
+      "installedAt": "2026-06-16T12:25:12.641Z",
+      "updatedAt": "2026-06-16T12:25:12.641Z"
+    },
+    "obsidian-bases": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-bases/SKILL.md",
+      "skillFolderHash": "f3330f27de4d7907ead57d0f48672f4d3280bb77",
+      "installedAt": "2026-06-16T12:25:12.644Z",
+      "updatedAt": "2026-06-16T12:25:12.644Z"
+    },
+    "json-canvas": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/json-canvas/SKILL.md",
+      "skillFolderHash": "9df7971db7ffebf96f2a207840b9f4765aa11b04",
+      "installedAt": "2026-06-16T12:25:12.644Z",
+      "updatedAt": "2026-06-16T12:25:12.644Z"
+    },
+    "obsidian-cli": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-cli/SKILL.md",
+      "skillFolderHash": "96254a554e480359de7b685571876f2e7f9ba57d",
+      "installedAt": "2026-06-16T12:25:12.645Z",
+      "updatedAt": "2026-06-16T12:25:12.645Z"
+    },
+    "obsidian-markdown": {
+      "source": "kepano/obsidian-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kepano/obsidian-skills.git",
+      "skillPath": "skills/obsidian-markdown/SKILL.md",
+      "skillFolderHash": "4723197c6dc59abc29819da87863b1ac20b96095",
+      "installedAt": "2026-06-16T12:25:12.645Z",
+      "updatedAt": "2026-06-16T12:25:12.645Z"
+    },
+    "drawio": {
+      "source": "bahayonghang/drawio-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/bahayonghang/drawio-skills.git",
+      "skillPath": "skills/drawio/SKILL.md",
+      "skillFolderHash": "caa06dda9d08c39fce99d02a1dc70397879c582d",
+      "installedAt": "2026-06-16T12:30:31.076Z",
+      "updatedAt": "2026-06-16T12:30:31.076Z"
+    },
+    "typst-author": {
+      "source": "apcamargo/typst-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/apcamargo/typst-skills.git",
+      "skillPath": "typst-author/SKILL.md",
+      "skillFolderHash": "f8b705c2e60a08f43b49a4691c3fe96a2e5000b1",
+      "installedAt": "2026-06-16T12:38:12.367Z",
+      "updatedAt": "2026-06-16T12:38:12.367Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "antigravity-cli",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed"
+  ]
+}

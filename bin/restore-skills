@@ -1,0 +1,53 @@
+#!/bin/sh
+# Restore skills from agents/.agents/.skill-lock.json into ~/.agents/skills/.
+#
+# Until the skills CLI ships `experimental_install -g`, we rehydrate by
+# re-issuing `skills add <source> -g -s <name> -y` per lockfile entry.
+# A snapshot of the lockfile is taken beforehand because every `skills add`
+# rewrites it with fresh timestamps — we restore the snapshot on exit to
+# keep the repo file unchanged.
+#
+# Tracking:   https://github.com/vercel-labs/skills/pull/743
+#              https://github.com/vercel-labs/skills/issues/683
+
+set -eu
+
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+LOCK="$REPO_ROOT/agents/.agents/.skill-lock.json"
+
+log() { printf '[restore-skills] %s\n' "$*" >&2; }
+
+if ! command -v npx >/dev/null 2>&1; then
+  printf '%s\n' "npx is required (install Node.js)." >&2
+  exit 1
+fi
+
+if [ ! -f "$LOCK" ]; then
+  log "no .skill-lock.json found, nothing to restore"
+  exit 0
+fi
+
+rows=$(node -e '
+  const lock = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8"));
+  for (const [name, entry] of Object.entries(lock.skills || {})) {
+    if (!entry || !entry.source) continue;
+    const src = entry.ref ? entry.source + "#" + entry.ref : entry.source;
+    process.stdout.write(name + "|" + src + "\n");
+  }
+' "$LOCK") || { printf '%s\n' "failed to parse $LOCK" >&2; exit 1; }
+
+if [ -z "$rows" ]; then
+  log "lockfile has no skills, nothing to restore"
+  exit 0
+fi
+
+SNAPSHOT=$(mktemp)
+trap 'cp "$SNAPSHOT" "$LOCK" && rm -f "$SNAPSHOT"' EXIT INT TERM
+cp "$LOCK" "$SNAPSHOT"
+
+printf '%s\n' "$rows" | while IFS='|' read -r name src; do
+  [ -z "$name" ] && continue
+  log "restoring $name from $src"
+  npx --yes skills add "$src" -a opencode -g -s "$name" -y </dev/null \
+    || log "failed to restore $name (continuing)"
+done

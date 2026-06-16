@@ -21,8 +21,8 @@ done
 
 # Packages whose Stow target under $HOME is a directory (not a single file).
 # When adding a new package with a directory target, add it here.
-PACKAGES=(opencode claude btop)
-TARGETS=(".config/opencode" ".claude" ".config/btop")
+PACKAGES=(opencode claude btop agents)
+TARGETS=(".config/opencode" ".claude" ".config/btop" ".agents")
 
 any_found=false
 declare -a affected=()

@@ -6,8 +6,9 @@ Each top-level folder is a Stow **package** whose internal structure mirrors `$H
 
 ```
 dotfiles/
-├── opencode/   # → ~/.config/opencode/  (AGENTS.md, opencode.jsonc, agent/, skills/)
-├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json)
+├── opencode/   # → ~/.config/opencode/  (AGENTS.md, opencode.jsonc, agent/)
+├── agents/     # → ~/.agents/            (.skill-lock.json)
+├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json, skills -> ../.agents/skills)
 ├── zsh/        # → ~/.zshrc
 ├── brew/       # → ~/Brewfile
 ├── ghostty/    # → ~/.config/ghostty/config
@@ -25,12 +26,25 @@ dotfiles/
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew ghostty zed btop   # or: stow -t ~ */
+stow -t ~ opencode claude zsh brew ghostty zed btop agents   # or: stow -t ~ */
 ```
 
 External dependencies these configs assume (install separately):
 
 - **oh-my-zsh** (and the `gis` theme) — `.zshrc` sources it
+- **Node.js** — `bin/restore-skills` uses `npx`
+
+### Agent skills
+
+Skills are managed by [`npx skills`](https://github.com/vercel-labs/skills) and installed globally into `~/.agents/skills/`. The lockfile at `agents/.agents/.skill-lock.json` is the source of truth (symlinked to `~/.agents/.skill-lock.json` via Stow). `~/.claude/skills` is a symlink to `~/.agents/skills/`, so opencode and Claude Code share the same skill set.
+
+After `stow`, restore skills on a new machine:
+
+```sh
+bin/restore-skills
+```
+
+This reads the lockfile and re-runs `npx skills add -g` for every entry, preserving the lockfile unchanged. Add or update skills as usual with `npx skills add <source> -a opencode -g`; the lockfile updates through the symlink and can be committed.
 
 ## Stow commands
 
@@ -60,12 +74,12 @@ The same works for directory trees. After stowing, editing the repo file and edi
 
 How Stow links a package's directory depends on whether the target dir already exists when you stow:
 
-- **Folded** — target dir is absent → Stow symlinks the *whole directory* (e.g. `~/.config/opencode/skills -> .../dotfiles/opencode/.config/opencode/skills`). Any file later written there lands **inside the repo automatically**, already tracked.
+- **Folded** — target dir is absent → Stow symlinks the *whole directory* (e.g. `~/.agents -> .../dotfiles/agents/.agents`). Any file later written there lands **inside the repo automatically**, already tracked.
 - **Unfolded** — target dir already exists (or you pass `--no-folding`, or two packages share it) → Stow makes a real directory and symlinks each file individually. New files written there are real files *outside* the repo until claimed.
 
 To convert: unfold with `stow --no-folding -R -t ~ <pkg>`; fold by emptying the target (`stow -D`, then `rm -rf` the now-empty dir) and re-stowing. Dry-run with `stow -n -v` first.
 
-Fold dirs where everything belongs in the repo (config-only). Keep dirs unfolded when they mix tracked config with untracked runtime — `opencode` stays unfolded so `node_modules/` isn't captured, while its `agent/` and `skills/` subdirs fold on their own and self-track.
+Fold dirs where everything belongs in the repo (config-only). Keep dirs unfolded when they mix tracked config with untracked runtime — `opencode` stays unfolded so `node_modules/` isn't captured, while its `agent/` subdir folds on its own and self-tracks.
 
 ### Claiming files written into an unfolded directory
 
