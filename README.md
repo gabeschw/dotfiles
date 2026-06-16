@@ -73,6 +73,24 @@ mv ~/.someconfig mypkg/.someconfig
 stow -t ~ mypkg
 ```
 
+## Removing a package (and keeping its config on another machine)
+
+When you delete a package on machine A but want machine B to keep that config as
+ordinary (untracked) files, you have to **freeze the symlinks into real files
+before pulling** — otherwise the pull deletes the repo files and B's symlinks
+dangle. On machine B, before `git pull`:
+
+```sh
+stow -D -t ~ <pkg>                 # remove the symlinks while repo files still exist
+cp -R <pkg>/<path> ~/<path>        # copy the content back as real files
+git pull --ff-only                 # now the repo deletion can't orphan anything
+```
+
+Heads-up: if you find yourself doing this "freeze before pull" dance often, that's
+a signal the config probably shouldn't have been removed from the repo in the first
+place — or that those tools belong in a per-host arrangement (e.g. `Brewfile.common`
++ `Brewfile.<host>`) rather than fully dropped.
+
 ## Not tracked
 
 opencode's node runtime (`node_modules/`, `package.json`, `bun.lock`) is intentionally
