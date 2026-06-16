@@ -12,12 +12,9 @@ dotfiles/
 ├── opencode/   # → ~/.config/opencode/  (AGENTS.md, opencode.jsonc, agent/, skills/)
 ├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json)
 ├── zsh/        # → ~/.zshrc
-├── git/        # → ~/.gitconfig, ~/.gitignore_global
 ├── brew/       # → ~/Brewfile
 ├── zed/        # → ~/.config/zed/settings.json
 ├── btop/       # → ~/.config/btop/
-├── micro/      # → ~/.config/micro/
-├── broot/      # → ~/.config/broot/  (conf, verbs, skins)
 └── lla/        # → ~/.config/lla/
 ```
 
@@ -33,7 +30,7 @@ explicitly if your shell doesn't expand the glob).
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh git brew zed btop micro broot lla
+stow -t ~ opencode claude zsh brew zed btop lla
 ```
 
 External dependencies these configs assume (install separately):
@@ -42,7 +39,6 @@ External dependencies these configs assume (install separately):
   refresh with `brew bundle dump --force --no-vscode --file ~/Brewfile`. The
   `--no-vscode` flag avoids dumping VS Code extensions, which Settings Sync owns.)
 - **oh-my-zsh** (and the `gis` theme) — `.zshrc` sources it
-- **broot** regenerates its own launcher on first run (`broot --install`)
 
 > **Note:** this repo does not live under `$HOME`, so the `-t ~` (`--target`) flag is
 > required — without it Stow targets the repo's parent directory.
@@ -63,10 +59,10 @@ Run from the repo root:
 Put it inside the right package at the path it should have under `$HOME`, then restow:
 
 ```sh
-# e.g. track ~/.gitconfig
-mkdir -p git
-mv ~/.gitconfig git/.gitconfig
-stow -t ~ git
+# e.g. track ~/.someconfig
+mkdir -p mypkg
+mv ~/.someconfig mypkg/.someconfig
+stow -t ~ mypkg
 ```
 
 ## Not tracked

@@ -12,7 +12,7 @@ export LC_ALL=en_US.UTF-8
 # load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="gis" # set by `omz`
+ZSH_THEME="gis"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -90,40 +90,9 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-. "$HOME/.local/bin/env"
-
-eval "$(zoxide init zsh)"
+alias weather="curl v2.wttr.in/Beit+Shemesh"
 
 # eza
 alias ls="eza --icons --group-directories-first"
@@ -134,37 +103,25 @@ alias lt="eza -T --icons"
 # fd
 alias fd="fd --hidden --no-ignore"
 
+# zoxide: smarter directory jumping (replaces `z` plugin)
+eval "$(zoxide init zsh)"
+
+# uv shell completions
+eval "$(uv generate-shell-completion zsh)"
+
 # ripgrep
 alias rg="rg --smart-case"
 
-# aichat: press Alt+E to refine the current command buffer via AI
+# aichat config at ~/Library/Application\ Support/aichat/config.yaml
+# aichat: press Alt+E to refine the current command in-place via AI
 _aichat_zsh() {
-    if [[ -n "$BUFFER" ]]; then
-        local _old=$BUFFER
-        BUFFER+="⌛"
-        zle -I && zle redisplay
-        BUFFER=$(aichat -e "$_old")
-        zle end-of-line
-    fi
+	if [[ -n "$BUFFER" ]]; then
+		local _old=$BUFFER
+		BUFFER+="⌛"
+		zle -I && zle redisplay
+		BUFFER=$(aichat -e "$_old")
+		zle end-of-line
+	fi
 }
 zle -N _aichat_zsh
 bindkey '\ee' _aichat_zsh
-
-eval "$(uv generate-shell-completion zsh)"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/gabe/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/gabe/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/gabe/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/gabe/google-cloud-sdk/completion.zsh.inc'; fi
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/gabe/.lmstudio/bin"
-# End of LM Studio CLI section
-
-source /Users/gabe/.config/broot/launcher/bash/br
