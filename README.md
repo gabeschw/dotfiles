@@ -101,16 +101,7 @@ To convert: unfold with `stow --no-folding -R -t ~ <pkg>`; fold by emptying the 
 
 Fold dirs where everything belongs in the repo (config-only). Keep dirs unfolded when they mix tracked config with untracked runtime — `opencode` stays unfolded so `node_modules/` isn't captured, while its `agent/` subdir folds on its own and self-tracks. `agents` is likewise kept unfolded (stow it with `--no-folding`) so the `npx`-installed `~/.agents/skills/` stays outside the repo; only `.skill-lock.json` is tracked.
 
-### Claiming files written into an unfolded directory
-
-In an unfolded target dir, files a tool writes are real files living outside the repo. `bin/get-new-dotfiles` finds these untracked files, moves them into the repo, and restows:
-
-```sh
-bin/get-new-dotfiles --dry-run   # preview what would be claimed
-bin/get-new-dotfiles             # move into repo + restow
-```
-
-It scans the packages with directory targets (`opencode`, `claude`, `btop`), skipping the node runtime and other non-tracked files. Folded subdirs need no claiming (they self-track), and the script's `find` doesn't descend into them anyway. When you add a package with a directory target, add it to the `PACKAGES`/`TARGETS` arrays in the script.
+In an unfolded target dir, files a tool writes are real files living outside the repo. To track one, move it into the matching path inside its package and **restow** (see [Adding files](#adding-files) above) — same `mv` + `stow -R` flow.
 
 ## Brewfile
 
