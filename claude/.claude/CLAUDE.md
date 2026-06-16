@@ -1,1 +1,1 @@
-@/Users/gabe/.config/opencode/AGENTS.md
+@~/.config/opencode/AGENTS.md

@@ -63,16 +63,46 @@ Run from the repo root:
 | `stow -R -t ~ <pkg>`    | Restow (after adding/renaming files in the package) |
 | `stow -D -t ~ <pkg>`    | Remove a package's symlinks |
 
-## Adding a file
+## Adding files and directories
 
-Put it inside the right package at the path it should have under `$HOME`, then restow:
+Stow only symlinks **files** — intermediate directories under `$HOME` are created as
+real directories as needed. If the target directory already exists (e.g. `~/.oh-my-zsh/`),
+Stow won't interfere with it; it just adds symlinks for the specific files inside it.
+
+### Adding a single file
 
 ```sh
 # e.g. track ~/.someconfig
 mkdir -p mypkg
 mv ~/.someconfig mypkg/.someconfig
-stow -t ~ mypkg
+stow -t ~ mypkg          # first stow of this package
 ```
+
+### Adding files to an already-stowed package
+
+Use `stow -R` (restow) so Stow picks up the new files:
+
+```sh
+# e.g. track ~/.oh-my-zsh/custom/themes/gis.zsh-theme
+mkdir -p zsh/.oh-my-zsh/custom/themes
+mv ~/.oh-my-zsh/custom/themes/gis.zsh-theme zsh/.oh-my-zsh/custom/themes/gis.zsh-theme
+stow -R -t ~ zsh
+```
+
+### Adding a directory tree (e.g. a new agent skill)
+
+Create the full path inside the package directory and place the files there, then
+restow. No special handling needed — Stow walks the tree and symlinks each file:
+
+```sh
+mkdir -p opencode/.config/opencode/skills/my-skill
+# create opencode/.config/opencode/skills/my-skill/SKILL.md
+# create opencode/.config/opencode/skills/my-skill/references/...
+stow -R -t ~ opencode
+```
+
+Editing the repo file or its symlinked original location is the same — they're the
+same file once stowed.
 
 ## Removing a package (and keeping its config on another machine)
 
