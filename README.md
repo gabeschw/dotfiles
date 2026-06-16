@@ -8,7 +8,7 @@ Each top-level folder is a Stow **package** whose internal structure mirrors `$H
 dotfiles/
 ├── opencode/   # → ~/.config/opencode/  (AGENTS.md, opencode.jsonc, agent/)
 ├── agents/     # → ~/.agents/            (.skill-lock.json)
-├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json, skills -> ../.agents/skills)
+├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json; skills/ bridged by bin/restore-skills)
 ├── zsh/        # → ~/.zshrc
 ├── brew/       # → ~/Brewfile
 ├── ghostty/    # → ~/.config/ghostty/config
@@ -26,17 +26,37 @@ dotfiles/
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew ghostty zed btop agents   # or: stow -t ~ */
+stow -t ~ opencode claude zsh brew ghostty zed btop
+stow -t ~ --no-folding agents   # keep ~/.agents a real dir so npx-installed skills stay outside the repo
+bin/restore-skills              # installs skills + bridges ~/.claude/skills -> ~/.agents/skills
 ```
+
+`agents` is stowed with `--no-folding` on purpose: on a fresh machine `~/.agents` doesn't exist, so a plain `stow` would fold the whole directory into the repo and `npx` would then write installed skills *inside* the repo. `--no-folding` forces a real `~/.agents/` with only `.skill-lock.json` symlinked. (Don't use the `stow -t ~ */` shorthand for the same reason.)
 
 External dependencies these configs assume (install separately):
 
 - **oh-my-zsh** (and the `gis` theme) — `.zshrc` sources it
 - **Node.js** — `bin/restore-skills` uses `npx`
 
+### Updating an existing machine
+
+After pulling, just run all of these every time. Re-running a step when nothing changed is safe — it simply does nothing.
+
+```sh
+git pull --ff-only
+stow -R -t ~ opencode claude zsh brew ghostty zed btop
+stow -R -t ~ --no-folding agents
+brew bundle --file ~/Brewfile   # installs any new packages
+bin/restore-skills              # installs any new skills + ensures the bridge link
+```
+
+`stow -R` re-syncs each package's symlinks to match the repo; `brew bundle` and `bin/restore-skills` install whatever the pull added.
+
 ### Agent skills
 
 Skills are managed by [`npx skills`](https://github.com/vercel-labs/skills) and installed globally into `~/.agents/skills/`. The lockfile at `agents/.agents/.skill-lock.json` is the source of truth (symlinked to `~/.agents/.skill-lock.json` via Stow). `~/.claude/skills` is a symlink to `~/.agents/skills/`, so opencode and Claude Code share the same skill set.
+
+That `~/.claude/skills` symlink is **not** Stow-managed: a relative symlink inside a Stow package resolves relative to the repo, not `$HOME`, so it can never reach the `npx`-managed `~/.agents/skills`. `bin/restore-skills` creates it directly instead.
 
 After `stow`, restore skills on a new machine:
 
@@ -44,7 +64,7 @@ After `stow`, restore skills on a new machine:
 bin/restore-skills
 ```
 
-This reads the lockfile and re-runs `npx skills add -g` for every entry, preserving the lockfile unchanged. Add or update skills as usual with `npx skills add <source> -a opencode -g`; the lockfile updates through the symlink and can be committed.
+This first links `~/.claude/skills -> ../.agents/skills`, then reads the lockfile and re-runs `npx skills add -g` for every entry, preserving the lockfile unchanged. Add or update skills as usual with `npx skills add <source> -a opencode -g`; the lockfile updates through the symlink and can be committed.
 
 ## Stow commands
 
@@ -74,12 +94,12 @@ The same works for directory trees. After stowing, editing the repo file and edi
 
 How Stow links a package's directory depends on whether the target dir already exists when you stow:
 
-- **Folded** — target dir is absent → Stow symlinks the *whole directory* (e.g. `~/.agents -> .../dotfiles/agents/.agents`). Any file later written there lands **inside the repo automatically**, already tracked.
+- **Folded** — target dir is absent → Stow symlinks the *whole directory* (e.g. `~/.config/zed -> .../dotfiles/zed/.config/zed`). Any file later written there lands **inside the repo automatically**, already tracked.
 - **Unfolded** — target dir already exists (or you pass `--no-folding`, or two packages share it) → Stow makes a real directory and symlinks each file individually. New files written there are real files *outside* the repo until claimed.
 
 To convert: unfold with `stow --no-folding -R -t ~ <pkg>`; fold by emptying the target (`stow -D`, then `rm -rf` the now-empty dir) and re-stowing. Dry-run with `stow -n -v` first.
 
-Fold dirs where everything belongs in the repo (config-only). Keep dirs unfolded when they mix tracked config with untracked runtime — `opencode` stays unfolded so `node_modules/` isn't captured, while its `agent/` subdir folds on its own and self-tracks.
+Fold dirs where everything belongs in the repo (config-only). Keep dirs unfolded when they mix tracked config with untracked runtime — `opencode` stays unfolded so `node_modules/` isn't captured, while its `agent/` subdir folds on its own and self-tracks. `agents` is likewise kept unfolded (stow it with `--no-folding`) so the `npx`-installed `~/.agents/skills/` stays outside the repo; only `.skill-lock.json` is tracked.
 
 ### Claiming files written into an unfolded directory
 
