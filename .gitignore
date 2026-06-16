@@ -1,2 +1,6 @@
 .DS_Store
 *.swp
+
+# Claude CLI auto-generated files
+claude/.claude/backups/
+claude/.claude/cache/
