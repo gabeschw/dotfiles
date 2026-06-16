@@ -2,10 +2,7 @@
 
 Personal dotfiles and coding-agent configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-## Layout
-
-Each top-level folder is a Stow **package** whose internal structure mirrors `$HOME`.
-Stow symlinks each file to the matching path under your home directory.
+Each top-level folder is a Stow **package** whose internal structure mirrors `$HOME`; Stow symlinks each file into place under your home directory.
 
 ```
 dotfiles/
@@ -18,11 +15,9 @@ dotfiles/
 └── btop/       # → ~/.config/btop/
 ```
 
-`AGENTS.md` is the single source of truth for agent instructions; `~/.claude/CLAUDE.md`
-just `@`-includes it, so Claude Code and opencode share one set of preferences.
+`AGENTS.md` is the single source of truth for agent instructions; `~/.claude/CLAUDE.md` just `@`-includes it, so Claude Code and opencode share one set of preferences.
 
-To stow everything at once: `stow -t ~ */` from the repo root (list package names
-explicitly if your shell doesn't expand the glob).
+> **The `-t ~` flag is required** on every Stow command. This repo doesn't live under `$HOME`, so without `--target` Stow would target the repo's parent directory.
 
 ## Setup on a new machine
 
@@ -30,29 +25,14 @@ explicitly if your shell doesn't expand the glob).
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew ghostty zed btop
+stow -t ~ opencode claude zsh brew ghostty zed btop   # or: stow -t ~ */
 ```
-
-## Brewfile
-
-`brew/Brewfile` tracks the Homebrew packages, casks, Go tools, and npm packages you want installed. It's managed by [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle) and is symlinked to `~/Brewfile`.
-
-| Command | Action |
-|---|---|
-| `brew bundle --file ~/Brewfile` | Install everything in the file (additive — never deletes) |
-| `brew bundle check --file ~/Brewfile` | Show what's missing or needs updating |
-| `brew bundle dump --force --no-vscode --file ~/Brewfile` | Regenerate from what's actually installed |
-
-After making changes via `brew bundle dump`, review with `git diff` and commit.
 
 External dependencies these configs assume (install separately):
 
 - **oh-my-zsh** (and the `gis` theme) — `.zshrc` sources it
 
-> **Note:** this repo does not live under `$HOME`, so the `-t ~` (`--target`) flag is
-> required — without it Stow targets the repo's parent directory.
-
-## Common commands
+## Stow commands
 
 Run from the repo root:
 
@@ -60,69 +40,68 @@ Run from the repo root:
 |---|---|
 | `stow -n -v -t ~ <pkg>` | Dry run — show what would happen, change nothing |
 | `stow -t ~ <pkg>`       | Create symlinks for a package |
-| `stow -R -t ~ <pkg>`    | Restow (after adding/renaming files in the package) |
+| `stow -R -t ~ <pkg>`    | Restow — pick up files added/renamed in the package |
 | `stow -D -t ~ <pkg>`    | Remove a package's symlinks |
 
-## Adding files and directories
+## Adding files
 
-Stow only symlinks **files** — intermediate directories under `$HOME` are created as
-real directories as needed. If the target directory already exists (e.g. `~/.oh-my-zsh/`),
-Stow won't interfere with it; it just adds symlinks for the specific files inside it.
-
-### Adding a single file
+Stow only symlinks **files**; it creates intermediate directories as real directories and leaves existing ones (e.g. `~/.oh-my-zsh/`) untouched. To track a new file, move it into the matching path inside its package, then **restow** so Stow picks it up:
 
 ```sh
-# e.g. track ~/.someconfig
-mkdir -p mypkg
-mv ~/.someconfig mypkg/.someconfig
-stow -t ~ mypkg          # first stow of this package
-```
-
-### Adding files to an already-stowed package
-
-Use `stow -R` (restow) so Stow picks up the new files:
-
-```sh
-# e.g. track ~/.oh-my-zsh/custom/themes/gis.zsh-theme
+# track ~/.oh-my-zsh/custom/themes/gis.zsh-theme
 mkdir -p zsh/.oh-my-zsh/custom/themes
-mv ~/.oh-my-zsh/custom/themes/gis.zsh-theme zsh/.oh-my-zsh/custom/themes/gis.zsh-theme
+mv ~/.oh-my-zsh/custom/themes/gis.zsh-theme zsh/.oh-my-zsh/custom/themes/
 stow -R -t ~ zsh
 ```
 
-### Adding a directory tree (e.g. a new agent skill)
+The same works for directory trees. After stowing, editing the repo file and editing its symlinked location are identical; they're the same file.
 
-Create the full path inside the package directory and place the files there, then
-restow. No special handling needed — Stow walks the tree and symlinks each file:
+### Folded vs. unfolded directories
+
+How Stow links a package's directory depends on whether the target dir already exists when you stow:
+
+- **Folded** — target dir is absent → Stow symlinks the *whole directory* (e.g. `~/.config/opencode/skills -> .../dotfiles/opencode/.config/opencode/skills`). Any file later written there lands **inside the repo automatically**, already tracked.
+- **Unfolded** — target dir already exists (or you pass `--no-folding`, or two packages share it) → Stow makes a real directory and symlinks each file individually. New files written there are real files *outside* the repo until claimed.
+
+To convert: unfold with `stow --no-folding -R -t ~ <pkg>`; fold by emptying the target (`stow -D`, then `rm -rf` the now-empty dir) and re-stowing. Dry-run with `stow -n -v` first.
+
+Fold dirs where everything belongs in the repo (config-only). Keep dirs unfolded when they mix tracked config with untracked runtime — `opencode` stays unfolded so `node_modules/` isn't captured, while its `agent/` and `skills/` subdirs fold on their own and self-track.
+
+### Claiming files written into an unfolded directory
+
+In an unfolded target dir, files a tool writes are real files living outside the repo. `bin/get-new-dotfiles` finds these untracked files, moves them into the repo, and restows:
 
 ```sh
-mkdir -p opencode/.config/opencode/skills/my-skill
-# create opencode/.config/opencode/skills/my-skill/SKILL.md
-# create opencode/.config/opencode/skills/my-skill/references/...
-stow -R -t ~ opencode
+bin/get-new-dotfiles --dry-run   # preview what would be claimed
+bin/get-new-dotfiles             # move into repo + restow
 ```
 
-Editing the repo file or its symlinked original location is the same — they're the
-same file once stowed.
+It scans the packages with directory targets (`opencode`, `claude`, `btop`), skipping the node runtime and other non-tracked files. Folded subdirs need no claiming (they self-track), and the script's `find` doesn't descend into them anyway. When you add a package with a directory target, add it to the `PACKAGES`/`TARGETS` arrays in the script.
 
-## Removing a package (and keeping its config on another machine)
+## Brewfile
 
-When you delete a package on machine A but want machine B to keep that config as
-ordinary (untracked) files, you have to **freeze the symlinks into real files
-before pulling** — otherwise the pull deletes the repo files and B's symlinks
-dangle. On machine B, before `git pull`:
+`brew/Brewfile` tracks Homebrew packages, casks, Go tools, and npm packages, managed by [Homebrew Bundle](https://github.com/Homebrew/homebrew-bundle) and symlinked to `~/Brewfile`.
+
+| Command | Action |
+|---|---|
+| `brew bundle --file ~/Brewfile` | Install everything in the file (additive — never deletes) |
+| `brew bundle check --file ~/Brewfile` | Show what's missing or needs updating |
+| `brew bundle dump --force --no-vscode --file ~/Brewfile` | Regenerate from what's actually installed |
+
+After a `dump`, review with `git diff` and commit.
+
+## Removing a package (keeping its config on another machine)
+
+When you delete a package on machine A but want machine B to keep that config as ordinary (untracked) files, **freeze the symlinks into real files before pulling** — otherwise the pull deletes the repo files and B's symlinks dangle. On machine B, before `git pull`:
 
 ```sh
-stow -D -t ~ <pkg>                 # remove the symlinks while repo files still exist
+stow -D -t ~ <pkg>                 # remove symlinks while repo files still exist
 cp -R <pkg>/<path> ~/<path>        # copy the content back as real files
 git pull --ff-only                 # now the repo deletion can't orphan anything
 ```
 
-Heads-up: if you find yourself doing this "freeze before pull" dance often, that's
-a signal the config probably shouldn't have been removed from the repo in the first
-place — or that those tools belong in a per-host arrangement (e.g. `Brewfile.common`
-+ `Brewfile.<host>`) rather than fully dropped.
+Doing this dance often is a signal the config probably shouldn't have been removed — or that those tools belong in a per-host arrangement (e.g. `Brewfile.common` + `Brewfile.<host>`) rather than fully dropped.
 
 ## Not tracked
 
-opencode's node runtime (`node_modules/`, `package.json`, `bun.lock`) is intentionally
-left in place under `~/.config/opencode/` and not version-controlled here.
+opencode's node runtime (`node_modules/`, `package.json`, `bun.lock`) is intentionally left in place under `~/.config/opencode/` and not version-controlled here.
