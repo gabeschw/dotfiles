@@ -10,11 +10,22 @@ Stow symlinks each file to the matching path under your home directory.
 ```
 dotfiles/
 ├── opencode/   # → ~/.config/opencode/  (AGENTS.md, opencode.jsonc, agent/, skills/)
-└── claude/     # → ~/.claude/           (CLAUDE.md, settings.json)
+├── claude/     # → ~/.claude/           (CLAUDE.md, settings.json)
+├── zsh/        # → ~/.zshrc
+├── git/        # → ~/.gitconfig, ~/.gitignore_global
+├── brew/       # → ~/Brewfile
+├── zed/        # → ~/.config/zed/settings.json
+├── btop/       # → ~/.config/btop/
+├── micro/      # → ~/.config/micro/
+├── broot/      # → ~/.config/broot/  (conf, verbs, skins)
+└── lla/        # → ~/.config/lla/
 ```
 
 `AGENTS.md` is the single source of truth for agent instructions; `~/.claude/CLAUDE.md`
 just `@`-includes it, so Claude Code and opencode share one set of preferences.
+
+To stow everything at once: `stow -t ~ */` from the repo root (list package names
+explicitly if your shell doesn't expand the glob).
 
 ## Setup on a new machine
 
@@ -22,8 +33,16 @@ just `@`-includes it, so Claude Code and opencode share one set of preferences.
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude
+stow -t ~ opencode claude zsh git brew zed btop micro broot lla
 ```
+
+External dependencies these configs assume (install separately):
+
+- **Homebrew packages:** `brew bundle --file ~/Brewfile` (additive — never deletes;
+  refresh with `brew bundle dump --force --no-vscode --file ~/Brewfile`. The
+  `--no-vscode` flag avoids dumping VS Code extensions, which Settings Sync owns.)
+- **oh-my-zsh** (and the `gis` theme) — `.zshrc` sources it
+- **broot** regenerates its own launcher on first run (`broot --install`)
 
 > **Note:** this repo does not live under `$HOME`, so the `-t ~` (`--target`) flag is
 > required — without it Stow targets the repo's parent directory.
