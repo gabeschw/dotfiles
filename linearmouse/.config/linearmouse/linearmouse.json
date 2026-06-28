@@ -1,0 +1,93 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.2",
+  "schemes" : [
+    {
+      "buttons" : {
+        "autoScroll" : {
+          "enabled" : false,
+          "mode" : "toggle",
+          "preserveNativeMiddleClick" : true,
+          "speed" : 1,
+          "trigger" : {
+            "button" : 2
+          }
+        },
+        "gesture" : {
+          "actions" : {
+            "down" : "appExpose",
+            "left" : "missionControl.spaceLeft",
+            "right" : "missionControl.spaceRight",
+            "up" : "missionControl"
+          },
+          "enabled" : true,
+          "threshold" : 30,
+          "trigger" : {
+            "button" : {
+              "controlID" : 195,
+              "kind" : "logitechControl",
+              "productID" : 45108,
+              "serialNumber" : "D51358D3"
+            },
+            "command" : false,
+            "control" : false,
+            "option" : false,
+            "shift" : false
+          }
+        },
+        "mappings" : [
+          {
+            "action" : {
+              "keyPress" : [
+                "option",
+                "tab"
+              ]
+            },
+            "button" : 2,
+            "command" : false,
+            "control" : false,
+            "option" : false,
+            "shift" : false
+          }
+        ],
+        "universalBackForward" : true
+      },
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0xb034",
+          "productName" : "MX Master 3S M",
+          "serialNumber" : "D51358D3",
+          "vendorID" : "0x46d"
+        }
+      },
+      "pointer" : {
+        "acceleration" : "unset",
+        "disableAcceleration" : false,
+        "redirectsToScroll" : false,
+        "speed" : 0.0708
+      },
+      "scrolling" : {
+        "acceleration" : {
+          "vertical" : 1
+        },
+        "distance" : {
+          "vertical" : "auto"
+        },
+        "smoothed" : {
+          "vertical" : {
+            "acceleration" : 0.83,
+            "bouncing" : false,
+            "enabled" : true,
+            "inertia" : 0.74,
+            "preset" : "easeInOut",
+            "response" : 0.68,
+            "speed" : 0.76
+          }
+        },
+        "speed" : {
+          "vertical" : 0
+        }
+      }
+    }
+  ]
+}

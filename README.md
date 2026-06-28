@@ -13,7 +13,8 @@ dotfiles/
 ├── brew/       # → ~/Brewfile
 ├── ghostty/    # → ~/.config/ghostty/config
 ├── zed/        # → ~/.config/zed/settings.json
-└── btop/       # → ~/.config/btop/
+├── btop/       # → ~/.config/btop/
+└── linearmouse/ # → ~/.config/linearmouse/
 ```
 
 `AGENTS.md` is the single source of truth for agent instructions; `~/.claude/CLAUDE.md` just `@`-includes it, so Claude Code and opencode share one set of preferences.
@@ -26,7 +27,7 @@ dotfiles/
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew ghostty zed btop
+stow -t ~ opencode claude zsh brew ghostty zed btop linearmouse
 stow -t ~ --no-folding agents   # keep ~/.agents a real dir so npx-installed skills stay outside the repo
 bin/restore-skills              # installs skills + bridges ~/.claude/skills -> ~/.agents/skills
 ```
@@ -44,7 +45,7 @@ After pulling, just run all of these every time. Re-running a step when nothing 
 
 ```sh
 git pull --ff-only
-stow -R -t ~ opencode claude zsh brew ghostty zed btop
+stow -R -t ~ opencode claude zsh brew ghostty zed btop linearmouse
 stow -R -t ~ --no-folding agents
 brew bundle --file ~/Brewfile   # installs any new packages
 bin/restore-skills              # installs any new skills + ensures the bridge link
