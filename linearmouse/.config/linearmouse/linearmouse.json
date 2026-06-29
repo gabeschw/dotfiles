@@ -64,7 +64,7 @@
         "acceleration" : "unset",
         "disableAcceleration" : false,
         "redirectsToScroll" : false,
-        "speed" : 0.0708
+        "speed" : 0.0724
       },
       "scrolling" : {
         "acceleration" : {
@@ -75,13 +75,13 @@
         },
         "smoothed" : {
           "vertical" : {
-            "acceleration" : 0.83,
+            "acceleration" : 1.28,
             "bouncing" : false,
             "enabled" : true,
-            "inertia" : 0.74,
-            "preset" : "easeInOut",
-            "response" : 0.68,
-            "speed" : 0.76
+            "inertia" : 0.82,
+            "preset" : "easeInOutQuartic",
+            "response" : 0.5600000000000001024,
+            "speed" : 1.1
           }
         },
         "speed" : {
