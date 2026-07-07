@@ -10,7 +10,8 @@
 - Prefer small, incremental changes. Keep me informed about what you are doing.
 - Understand existing code and form hypotheses before making changes.
 - Consider alternative solutions and explain pros/cons/tradeoffs when multiple solutions exist.
-- Always explicitly call out any potential security-sensitive changes (auth, file paths, network bind, command exec).
+- Prioritize correctness over ease of implementation. 
+- Always explicitly call out any potential security-sensitive changes.
 - Never print, log, or commit credentials or secrets.
 - If a task is significantly larger or more complex than initially apparent, flag it before proceeding rather than silently expanding scope.
 
