@@ -27,12 +27,17 @@ dotfiles/
 brew install stow
 git clone <repo-url> ~/Projects/repos/dotfiles
 cd ~/Projects/repos/dotfiles
-stow -t ~ opencode claude zsh brew ghostty zed btop linearmouse
+stow -t ~ opencode zsh brew ghostty zed btop linearmouse
 stow -t ~ --no-folding agents   # keep ~/.agents a real dir so npx-installed skills stay outside the repo
+stow -t ~ claude                # .stow-no-folding marker prevents directory folding
 bin/restore-skills              # installs skills + bridges ~/.claude/skills -> ~/.agents/skills
 ```
 
-`agents` is stowed with `--no-folding` on purpose: on a fresh machine `~/.agents` doesn't exist, so a plain `stow` would fold the whole directory into the repo and `npx` would then write installed skills *inside* the repo. `--no-folding` forces a real `~/.agents/` with only `.skill-lock.json` symlinked. (Don't use the `stow -t ~ */` shorthand for the same reason.)
+`agents` is stowed with `--no-folding` on purpose: on a fresh machine `~/.agents` doesn't exist, so a plain `stow` would fold the whole directory into the repo and `npx` would then write installed skills *inside* the repo. `--no-folding` forces a real `~/.agents/` with only `.skill-lock.json` symlinked.
+
+`claude` contains a `.stow-no-folding` marker file for the same reason: without it, Stow would fold `~/.claude` into a single directory symlink and Claude CLI's auto-generated files (history, cache, daemon logs, etc.) would land in the repo. The marker forces individual file symlinks so only `CLAUDE.md` and `settings.json` are tracked.
+
+(Don't use the `stow -t ~ */` shorthand for the same reason.)
 
 External dependencies these configs assume (install separately):
 
@@ -45,8 +50,9 @@ After pulling, just run all of these every time. Re-running a step when nothing 
 
 ```sh
 git pull --ff-only
-stow -R -t ~ opencode claude zsh brew ghostty zed btop linearmouse
+stow -R -t ~ opencode zsh brew ghostty zed btop linearmouse
 stow -R -t ~ --no-folding agents
+stow -R -t ~ claude
 brew bundle --file ~/Brewfile   # installs any new packages
 bin/restore-skills              # installs any new skills + ensures the bridge link
 ```
