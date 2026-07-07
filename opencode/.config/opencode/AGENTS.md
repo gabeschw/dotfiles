@@ -57,6 +57,7 @@
 
 ## Git
 
+- Check and advise if any documentation needs updating before committing changes.
 - Never commit without user approval, even when otherwise authorized to make changes.
 - Show proposed commit message before creating commits.
 - One concern per commit whenever possible. Avoid mixed changes.
