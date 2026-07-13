@@ -1,12 +1,11 @@
 {
-  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.2",
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.3",
   "schemes" : [
     {
       "buttons" : {
         "autoScroll" : {
           "enabled" : false,
           "mode" : "toggle",
-          "preserveNativeMiddleClick" : true,
           "speed" : 1,
           "trigger" : {
             "button" : 2
@@ -60,33 +59,57 @@
           "vendorID" : "0x46d"
         }
       },
+      "logitech" : {
+        "highResolutionWheel" : true
+      },
       "pointer" : {
         "acceleration" : "unset",
         "disableAcceleration" : false,
         "redirectsToScroll" : false,
-        "speed" : 0.0724
+        "speed" : "unset"
       },
       "scrolling" : {
         "acceleration" : {
+          "horizontal" : 2,
           "vertical" : 1
         },
-        "distance" : {
-          "vertical" : "auto"
+        "distance" : "auto",
+        "reverse" : {
+          "horizontal" : true,
+          "vertical" : false
         },
         "smoothed" : {
+          "horizontal" : {
+            "enabled" : false
+          },
           "vertical" : {
-            "acceleration" : 1.28,
+            "acceleration" : 0,
             "bouncing" : false,
             "enabled" : true,
-            "inertia" : 0.82,
-            "preset" : "easeInOutQuartic",
-            "response" : 0.5600000000000001024,
-            "speed" : 1.1
+            "inertia" : 0,
+            "preset" : "custom",
+            "response" : 1,
+            "speed" : 0
           }
         },
-        "speed" : {
-          "vertical" : 0
+        "speed" : 0
+      }
+    },
+    {
+      "if" : {
+        "device" : {
+          "category" : "trackpad",
+          "productID" : "0x343",
+          "productName" : "Apple Internal Keyboard \/ Trackpad",
+          "serialNumber" : "FM7224200CRNX0QAM+EBZ",
+          "vendorID" : "0x5ac"
         }
+      },
+      "pointer" : {
+        "acceleration" : "unset",
+        "disableAcceleration" : false,
+        "redirectsToScroll" : false,
+        "speed" : "unset"
       }
     }
   ]
