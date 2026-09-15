@@ -13,7 +13,11 @@
       "type": "registry"
     }
   },
-  "icon_theme": "Zed (Default)",
+  "icon_theme": {
+    "mode": "system",
+    "light": "Colored Zed Icons Theme Light",
+    "dark": "Colored Zed Icons Theme Dark"
+  },
   "edit_predictions": {
     "provider": "zed"
   },
@@ -45,10 +49,10 @@
     "show_user_picture": true
   },
   "project_panel": {
+    "folder_indicator": "both",
     "hide_root": false,
-    "bold_folder_labels": true,
+    "bold_folder_labels": false,
     "auto_fold_dirs": true,
-    "folder_icons": true,
     "dock": "left",
     "button": true
   },
@@ -82,7 +86,7 @@
   "ui_font_size": 16,
   "buffer_font_size": 14,
   "theme": {
-    "mode": "system",
+    "mode": "dark",
     "light": "One Light",
     "dark": "One Dark"
   }
