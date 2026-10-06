@@ -4,3 +4,6 @@
 # Claude CLI auto-generated files
 claude/.claude/backups/
 claude/.claude/cache/
+
+# opencode local service credentials
+opencode/.config/opencode/service.json
