@@ -94,17 +94,19 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 alias weather="curl v2.wttr.in/Beit+Shemesh"
 
-# eza
-alias ls="eza --icons --group-directories-first"
-alias ll="eza -l --icons --group-directories-first"
-alias la="eza -la --icons --group-directories-first"
-alias lt="eza -T --icons"
+# eza (only if installed)
+if command -v eza >/dev/null 2>&1; then
+	alias ls="eza --icons --group-directories-first"
+	alias ll="eza -l --icons --group-directories-first"
+	alias la="eza -la --icons --group-directories-first"
+	alias lt="eza -T --icons"
+fi
 
 # fd
 alias fd="fd --hidden --no-ignore"
 
 # zoxide: smarter directory jumping (replaces `z` plugin)
-eval "$(zoxide init zsh)"
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # uv shell completions
 eval "$(uv generate-shell-completion zsh)"
